@@ -1,1 +1,4 @@
 dashboard/
+finance/data
+
+hooks/health/client_secrets_file.json
