@@ -3,6 +3,8 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import datetime
+import pickle
+
 # Client secret JSON file downloaded from the Google Cloud Console
 CLIENT_SECRET_FILE = '/Users/gabriella/Repos/dashboard/hooks/health/client_secrets_file.json'
 
@@ -14,6 +16,9 @@ redirect_uri = 'http://localhost:8080/'
 def get_access_token():
     flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRET_FILE, SCOPES, redirect_uri=redirect_uri)
     credentials = flow.run_local_server()
+    # Pickle the credentials
+    with open('/Users/gabriella/Repos/dashboard/hooks/health/credentials.pkl', 'wb') as f:
+        pickle.dump(credentials, f)
     return credentials
 
 def aggregate_steps(credentials):
@@ -39,9 +44,16 @@ def aggregate_steps(credentials):
         "endTimeMillis": int(end_time.timestamp() * 1000)
     }
     response = requests.post(url, headers=headers, json=params)
+    return response.json()
 
 if __name__ == "__main__":
-    credentials = get_access_token()
+    get_access_token()
+    def open_credentials():
+        with open('/Users/gabriella/Repos/dashboard/hooks/health/credentials.pkl', 'rb') as f:
+            credentials = pickle.load(f)
+        return credentials
+
+    credentials = open_credentials()
     aggregated_steps = aggregate_steps(credentials)
     print(f"Aggregated Steps for Today: {aggregated_steps}")
 
