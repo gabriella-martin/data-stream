@@ -2,4 +2,5 @@ dashboard/
 finance/data
 
 hooks/health/client_secrets_file.json
+hooks/health/credentials.pkl
 secrets.json
